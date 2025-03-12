@@ -1,0 +1,46 @@
+<div class="flex gap-4 p-4 ">
+  <!-- Available Fields List -->
+  <mat-card class="w-1/3 p-4 ">
+    <mat-form-field class="w-full">
+      <mat-label>Search for properties and fields</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (input)="filterFields()">
+    </mat-form-field>
+    <h2 class="text-lg font-semibold mb-3">Available Fields</h2>
+    <div cdkDropList id="availableFields" cdkDropList [cdkDropListData]="filteredFields"  [cdkDropListConnectedTo]="['formList']"
+         (cdkDropListDropped)="drop($event)" class="p-2 border rounded">
+      <mat-list class="">
+        <mat-list-item *ngFor="let field of filteredFields" cdkDrag>
+          ☰ {{ field.label }}
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card>
+
+  <!-- Dynamic Form -->
+  <mat-card class="w-2/3 p-4">
+    <h2 class="text-lg font-semibold mb-3">Form</h2>
+    <form [formGroup]="form" class="cursor-pointer">
+      <div cdkDropList id="formList" [cdkDropListData]="selectedFields" [cdkDropListConnectedTo]="['availableFields']"
+           (cdkDropListDropped)="drop($event)" class="border border-dashed p-4 min-h-[200px]">
+        <div *ngFor="let field of selectedFields; let i = index" cdkDrag class="p-3 border rounded flex items-center">
+          ☰ 
+          <mat-form-field class="ml-2 w-full">
+            <mat-label>{{ field.label }}</mat-label>
+            <input matInput [formControlName]="field.label">
+            <mat-error *ngIf="form.get(field.label)?.invalid && form.get(field.label)?.touched">
+              <span *ngIf="form.get(field.label)?.hasError('required')">Required field</span>
+              <span *ngIf="form.get(field.label)?.hasError('email')">Invalid email</span>
+              <span *ngIf="form.get(field.label)?.hasError('pattern')">Invalid format</span>
+            </mat-error>
+          </mat-form-field>
+          <button mat-icon-button color="warn" (click)="removeField(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </form>
+    <button mat-raised-button color="primary" (click)="submitForm()" class="mt-4 w-20 h-5">Submit</button>
+  </mat-card> 
+ 
+</div>
+ 
